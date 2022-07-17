@@ -14,7 +14,11 @@ DESTINATION_FORMAT = "png"
 
 def write_image(image, destination_filename):
     if DESTINATION_FORMAT == "png":
-        cv.imwrite(destination_filename, image, [cv.IMWRITE_PNG_COMPRESSION, 6])
+        options = [cv.IMWRITE_PNG_COMPRESSION, 6]
+    if DESTINATION_FORMAT == "webp":
+        options = [cv.IMWRITE_WEBP_QUALITY, 100]
+
+    cv.imwrite(destination_filename, image, options)
 
 
 def is_bw(image):
@@ -47,7 +51,7 @@ def process_single_file(directory, filename, processed_dir):
     stem = Path(filename).stem
 
     processed_filename = join(processed_dir, f"{stem}.{DESTINATION_FORMAT}")
-    print(processed_filename)
+    write_image(processed_image, processed_filename)
 
 
 def process_files(directory, files):
