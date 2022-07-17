@@ -1,5 +1,6 @@
 import cv2 as cv
 import magic
+import multiprocessing as mp
 import numpy as np
 import os
 from os.path import isfile, join, isdir
@@ -24,6 +25,10 @@ def is_bw(image):
         averages /= 3
         pct = np.percentile(np.abs(averages - r), 99)
         return pct < 4
+
+def wrapped_process_single_file(args):
+    directory, filename, processed_dir = args
+    process_single_file(directory, filename, processed_dir)
     
 def process_single_file(directory, filename, processed_dir):
     abs_filename = join(directory, filename)
@@ -43,9 +48,11 @@ def process_files(directory, files):
     processed_dir = join(directory, 'processed')
     if not isdir(processed_dir):
         os.mkdir(processed_dir)
-        
-    for f in files:
-        process_single_file(directory, f, processed_dir)
+
+    with mp.Pool() as pool:
+        args = [(directory, f, processed_dir) for f in files]
+        pool.map(wrapped_process_single_file, args)
+
 
 def process_directory(directory):
     files = []
