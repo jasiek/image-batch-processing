@@ -7,11 +7,15 @@ from os.path import isfile, join, isdir
 from pathlib import Path
 import sys
 
-INPUT_MIME_TYPES = [
-    'image/jpeg',
-    'image/tiff',
-    'image/bmp'
-]
+INPUT_MIME_TYPES = ["image/jpeg", "image/tiff", "image/bmp"]
+
+DESTINATION_FORMAT = "png"
+
+
+def write_image(image, destination_filename):
+    if DESTINATION_FORMAT == "png":
+        cv.imwrite(destination_filename, image, [cv.IMWRITE_PNG_COMPRESSION, 6])
+
 
 def is_bw(image):
     if len(image.shape) < 3:
@@ -26,10 +30,12 @@ def is_bw(image):
         pct = np.percentile(np.abs(averages - r), 99)
         return pct < 4.1
 
+
 def wrapped_process_single_file(args):
     directory, filename, processed_dir = args
     process_single_file(directory, filename, processed_dir)
-    
+
+
 def process_single_file(directory, filename, processed_dir):
     abs_filename = join(directory, filename)
     image = cv.imread(abs_filename)
@@ -39,13 +45,13 @@ def process_single_file(directory, filename, processed_dir):
         processed_image = image
 
     stem = Path(filename).stem
-    
-    processed_filename = join(processed_dir, f"{stem}.png")
+
+    processed_filename = join(processed_dir, f"{stem}.{DESTINATION_FORMAT}")
     print(processed_filename)
-    cv.imwrite(processed_filename, processed_image, [cv.IMWRITE_PNG_COMPRESSION, 6])
-        
+
+
 def process_files(directory, files):
-    processed_dir = join(directory, 'processed')
+    processed_dir = join(directory, "processed")
     if not isdir(processed_dir):
         os.mkdir(processed_dir)
 
@@ -64,8 +70,9 @@ def process_directory(directory):
             continue
 
         files.append(filename)
-    
+
     process_files(directory, files)
+
 
 if __name__ == "__main__":
     directory = sys.argv[1]
