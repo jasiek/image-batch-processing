@@ -24,7 +24,7 @@ def is_bw(image):
         averages = averages + r + g + b
         averages /= 3
         pct = np.percentile(np.abs(averages - r), 99)
-        return pct < 4
+        return pct < 4.1
 
 def wrapped_process_single_file(args):
     directory, filename, processed_dir = args
@@ -34,7 +34,7 @@ def process_single_file(directory, filename, processed_dir):
     abs_filename = join(directory, filename)
     image = cv.imread(abs_filename)
     if is_bw(image):
-        processed_image = cv.cvtColor(image, cs.COLOR_BGR2GRAY)
+        processed_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
     else:
         processed_image = image
 
