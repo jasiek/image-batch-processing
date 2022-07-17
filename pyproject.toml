@@ -8,6 +8,7 @@ authors = ["Jan Szumiec <jan.szumiec@gmail.com>"]
 python = "^3.9"
 opencv-contrib-python = "^4.6.0"
 opencv-python = "^4.6.0"
+python-magic = "^0.4.27"
 
 [tool.poetry.dev-dependencies]
 
